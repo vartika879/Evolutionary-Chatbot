@@ -12,3 +12,4 @@ python-dotenv
 duckduckgo-search
 requests
 pydantic
+langgraph-checkpoint-sqlite
