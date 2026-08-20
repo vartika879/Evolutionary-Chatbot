@@ -8,4 +8,54 @@ wheels/
 
 # Virtual environments
 .venv
-.envS
+.env
+.venv/
+__pycache__/
+.env
+*.pyc
+chatbot.db
+
+
+
+
+# Virtual Environment
+.venv/
+venv/
+env/
+
+# Environment variables
+.env
+
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# FAISS / generated vector stores
+faiss_index/
+vector_store/
+
+# Temporary files
+*.tmp
+*.temp
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Streamlit
+.streamlit/secrets.toml
+
+# Logs
+*.log
+*.db-shm
+*.db-wal
+*.db-journal

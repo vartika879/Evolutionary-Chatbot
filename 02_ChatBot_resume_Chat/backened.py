@@ -39,12 +39,14 @@ checkpointer = SqliteSaver(conn=conn)
 
 
 graph = StateGraph(ChatState)
-graph.add_node("Chat_node",chat_node)
 
-graph.add_edge(START, "Chat_node")
-graph.add_edge("Chat_node", END)
+graph.add_node("chat_node",chat_node)
+
+graph.add_edge(START, "chat_node")
+graph.add_edge("chat_node", END)
 
 chatbot=graph.compile(checkpointer=checkpointer)
+
 def retrieve_all_threads():
     all_threads=set()
     for checkpoint in checkpointer.list(None):

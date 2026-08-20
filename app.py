@@ -1,5 +1,5 @@
 import streamlit as st
-from backened import chatbot,retrieve_all_threads
+from Chatbot_with_Streaming.backend import chatbot
 from langchain_core.messages import HumanMessage
 import uuid
 
@@ -11,18 +11,16 @@ def generate_thread_id():
 def reset_chat():
     thread_id=generate_thread_id()
     st.session_state['thread_id']=thread_id
-    add_thread(thread_id)#add_thread(st.session_state['thread_id'])
+    add_thread(st.session_state['thread_id'])
     st.session_state['messages_history']=[]
 
-def add_thread(thread_id):
+def  add_thread(thread_id):
     if thread_id not in st.session_state['chat_threads']:
       st.session_state['chat_threads'].append(thread_id)
 
-def load_conversation(thread_id):
-    CONFIG={'configurable': {"thread_id":thread_id}}
-    state=chatbot.get_state(config=CONFIG)
+def load_conversation():
+    return print(chatbot.get_state(config=CONFIG).values['messages'])
 
-    return state.values.get("messages",[])
 
 
 #*********************************SEssion Setup********************************
@@ -33,10 +31,7 @@ if 'thread_id' not in st.session_state:
     st.session_state['thread_id']=generate_thread_id()
 
 if 'chat_threads' not in st.session_state:
-    st.session_state['chat_threads']=retrieve_all_threads()
-
-
-
+    st.session_state['chat_history']=[]
 
 add_thread(st.session_state['thread_id'])
 
@@ -49,10 +44,8 @@ if st.sidebar.button("New Chat"):
 st.sidebar.header("My Conversations")
 
 for thread_id in st.session_state['chat_threads'][::-1]:
-     
     if st.sidebar.button(str(thread_id)):
         st.session_state['thread_id']=thread_id
-
         messages = load_conversation(thread_id)
 
         temp_messages=[]
@@ -63,7 +56,7 @@ for thread_id in st.session_state['chat_threads'][::-1]:
                 role='assistant'
             temp_messages.append({'role':role,'content':message.content})
 
-        st.session_state['messages_history'] = temp_messages
+        st.session_state['message_history'] = temp_messages
 
 
 #*******************************Main UI ******************************************
@@ -78,19 +71,13 @@ for msg in st.session_state['messages_history']:
 user_input = st.chat_input("Type here...")
 
 if user_input:
-   
     # Add user message
     st.session_state['messages_history'].append({'role': 'user', "content": user_input})
     with st.chat_message('user'):
         st.text(user_input)
 
-    
 
-
-    CONFIG={'configurable': {'thread_id': st.session_state['thread_id']},
-            "metadata":{'thread_id': st.session_state['thread_id']},
-            "run_name":"chat_turn"
-            }
+    CONFIG={'configurable': {'thread_id': st.session_state['thread_id']}}
     # Assistant streaming reply
     with st.chat_message('assistant'):
         placeholder = st.empty()
