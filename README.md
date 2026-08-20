@@ -1,442 +1,126 @@
 🧠 Evolutionary Chatbot
+An evolving conversational AI system built with LangGraph, where the core chatbot architecture is progressively enhanced across modular stages—from a basic streaming bot into a tool-using, persistent, and document-aware AI agent.
 
-An evolving conversational AI system built with LangGraph, where the same chatbot architecture is progressively enhanced with new AI engineering capabilities.
+🚀 Progression Overview
+Rather than creating disjointed prototypes, each stage isolates and tackles a specific AI engineering problem:
 
-Instead of creating multiple unrelated chatbot demos, this project follows the evolution of a conversational AI system from a basic chatbot into a more capable streaming, resume-aware, tool-using, persistent, and document-aware AI assistant.
+Plaintext
+Chatbot Foundation ──► Streaming Responses ──► Context Persistence ──► Tool Calling ──► PDF-based RAG
+Stage	Focus Area	Core Technologies / Concepts
+01 — Streaming Chatbot	Real-time output streaming	LangGraph, LangChain, Groq, Streamlit
+02 — Resume-aware Chatbot	Persistent conversational memory	SqliteSaver, Thread-based state, SQLite
+03 — Tool-Calling Agent	Dynamic execution & agentic routing	ToolNode, Web Search, Financial APIs, Math Tools
+04 — RAG-enabled Assistant	Grounded PDF Question-Answering	Cohere Embeddings, FAISS, PyPDF, Custom RAG Tool
+🏗️ Architecture & Workflow
+The system relies on a stateful graph that dynamically decides between direct generation and cyclic tool execution:
 
-The project is structured as a progression, with each major stage maintained separately so that the implementation and architectural changes can be studied independently.
-
-🚀 Project Evolution
-Chatbot Foundation
-        ↓
-Streaming Responses
-        ↓
-Resume-aware Conversations
-        ↓
-Tool Calling
-        ↓
-Persistent Conversations
-        ↓
-PDF-based RAG
-
-Each stage introduces a new engineering concept while building upon the previous chatbot architecture.
-
+Plaintext
+       ┌──────────────┐
+       │ Streamlit UI │
+       └──────┬───────┘
+              │
+              ▼
+       ┌──────────────┐
+       │  Chat Node   │◄─────────────────────────┐
+       └──────┬───────┘                          │
+              │                                  │
+       [Tool Required?]                          │
+        ├── No ──────────────────► [ END / Final Output ]
+        └── Yes                                  │
+             │                                   │
+             ▼                                   │
+       ┌──────────────┐                          │
+       │  Tool Node   │──────────────────────────┘
+       └──────┬───────┘
+              ├── Web Search
+              ├── Stock Lookup
+              ├── Calculator
+              └── RAG Tool ──► FAISS Vector Store ──► Cohere Embeddings ──► Uploaded PDF
 📂 Repository Structure
+Plaintext
 Evolutionary-Chatbot/
 │
-├── 01_Chatbot_with_Streaming/
-│   └── Streaming chatbot implementation
-│
-├── 02_ChatBot_resume_Chat/
-│   └── Resume-aware chatbot with persistent conversation state
-│
-├── 03_Chatbot_with_tools/
+├── 01_Chatbot_with_Streaming/     # Basic conversational bot with token streaming
+├── 02_ChatBot_resume_Chat/        # Context-aware chat with SQLite checkpoints
+├── 03_Chatbot_with_tools/         # Dynamic tool-calling implementation
 │   ├── backend.py
 │   ├── fr.py
-│   ├── tool.py
-│   └── README.MD
-│
-├── 04_Chatbot_with_rag/
+│   └── tool.py
+├── 04_Chatbot_with_rag/           # End-to-end PDF RAG with LangGraph routing
 │   ├── backend.py
 │   ├── frontend.py
-│   ├── tool.py
-│   └── README.MD
-│
-├── chat_cp/
-│   └── Additional chatbot experimentation
-│
-├── app.py
-├── main.py
+│   └── tool.py
 ├── requirements.txt
-├── pyproject.toml
-├── uv.lock
-├── .python-version
-├── .gitignore
 └── README.md
-🧩 Evolution Stages
-01 — Streaming Chatbot
-
-The project begins with a conversational chatbot enhanced with streaming responses.
-
-Instead of waiting for the complete model response, the application displays the generated response incrementally.
-
-Key Concepts
-LangGraph chatbot workflow
-LLM integration
-Streaming responses
-Incremental AI output
-Improved conversational experience
-
-This stage establishes the foundation for the later versions.
-
-02 — Resume Chatbot
-
-The chatbot is extended to work with resume information, allowing users to interact with candidate-related information through conversational queries.
-
-Key Concepts
-Resume-aware conversations
-Context handling
-Conversation history
-Thread-based conversations
-Persistent state
-SQLite checkpointing
-
-This stage introduces persistent conversational state, allowing conversations to maintain context beyond a single interaction.
-
-03 — Chatbot with Tools
-
-The chatbot evolves from a purely conversational system into a tool-using AI agent.
-
-Instead of depending only on the LLM's internal knowledge, the system can determine when an external tool is required and execute it.
-
-Available Tools
-Web search
-Stock price lookup
-Calculator
-Key Concepts
-LangGraph ToolNode
-Tool calling
-Conditional routing
-Tool execution
-Agentic workflows
-Iterative tool usage
-
-The workflow can be represented as:
-
-User Query
-    ↓
-Chat Node
-    ↓
-Tool Decision
-    │
-    ├── No Tool Required ──→ Final Response
-    │
-    └── Tool Required
-            ↓
-        Tool Node
-            ↓
-        Chat Node
-
-This allows the chatbot to perform actions beyond simple text generation.
-
-04 — RAG-enabled Chatbot
-
-The final major stage introduces Retrieval-Augmented Generation (RAG).
-
-Users can upload a PDF and ask questions about its contents.
-
-Instead of relying entirely on the LLM's internal knowledge, relevant information is retrieved from the uploaded document and provided to the model as context.
-
-RAG Pipeline
-PDF
- │
- ▼
-PyPDFLoader
- │
- ▼
-Document Extraction
- │
- ▼
-RecursiveCharacterTextSplitter
- │
- ▼
-Document Chunks
- │
- ▼
-Cohere Embeddings
- │
- ▼
-FAISS Vector Store
- │
- ▼
-Retriever
- │
- ▼
-RAG Tool
- │
- ▼
-LangGraph
- │
- ▼
-LLM Response
-Key Concepts
-PDF ingestion
-Document extraction
-Text chunking
-Embeddings
-FAISS vector search
-Retrieval
-RAG tool
-Thread-specific document context
-LangGraph orchestration
-
-The final implementation maintains retrievers per conversation thread, allowing different conversations to maintain their own uploaded-document context.
-
-🏗️ Final Architecture
-
-The final version combines conversational reasoning, tool calling, retrieval, and state management into a LangGraph-based workflow.
-
-                         ┌─────────────────────┐
-                         │     Streamlit UI    │
-                         └──────────┬──────────┘
-                                    │
-                                    ▼
-                         ┌─────────────────────┐
-                         │      LangGraph      │
-                         │      Chat Node      │
-                         └──────────┬──────────┘
-                                    │
-                              Tool Decision
-                                    │
-                    ┌───────────────┴───────────────┐
-                    │                               │
-                    ▼                               ▼
-          ┌──────────────────┐             ┌──────────────────┐
-          │    Tool Node     │             │     Response     │
-          └────────┬─────────┘             └──────────────────┘
-                   │
-          ┌────────┼───────────┬────────────┐
-          │        │           │            │
-          ▼        ▼           ▼            ▼
-       Search    Stock      Calculator     RAG
-                                           │
-                                           ▼
-                                    ┌─────────────┐
-                                    │    FAISS    │
-                                    └──────┬──────┘
-                                           │
-                                  Cohere Embeddings
-                                           │
-                                           ▼
-                                          PDF
-🔄 LangGraph Workflow
-
-The final chatbot uses a graph-based workflow rather than a simple linear request-response pipeline.
-
-START
-  │
-  ▼
-Chat Node
-  │
-  ├──────── No tool required ────────→ END
-  │
-  ▼
-Tool Node
-  │
-  └──────────────────────────────────→ Chat Node
-
-This enables iterative tool execution:
-
-Receive the user query
-Determine whether a tool is required
-Execute the selected tool
-Return the tool result to the model
-Continue the workflow if another tool is required
-Generate the final response
 🛠️ Tech Stack
-AI / LLM
-Python
-LangChain
-LangGraph
-Groq
-RAG
-PyPDF
-Recursive Character Text Splitter
-Cohere Embeddings
-FAISS
-Agent / Tools
-LangGraph ToolNode
-Web Search
-Stock Price Lookup
-Calculator
-Custom RAG Tool
-Application
-Streamlit
-Persistence
-SQLite
-LangGraph SqliteSaver
-✨ Key Features
-Conversational AI
-LangGraph-based orchestration
-Streaming responses
-Resume-aware conversations
-Tool calling
-Web search
-Stock price retrieval
-Calculator tool
-Persistent conversation state
-Thread-based conversations
-SQLite checkpointing
-PDF ingestion
-Document chunking
-Cohere embeddings
-FAISS vector search
-Retrieval-Augmented Generation
-Thread-specific document retrieval
-Iterative tool execution
-🔐 Environment Variables
+Frameworks & Orchestration: LangGraph, LangChain
 
-Create a .env file in the project root:
+LLM Provider: Groq
 
-GROQ_API_KEY=your_groq_api_key
-COHERE_API_KEY=your_cohere_api_key
+Vector Search & Embeddings: FAISS, Cohere
 
-Never commit your .env file to GitHub.
+State Persistence: SQLite via SqliteSaver
 
-⚙️ Installation
+Frontend: Streamlit
+
+Document Processing: PyPDF, RecursiveCharacterTextSplitter
+
+⚙️ Quick Start
 1. Clone the repository
+
+Bash
 git clone https://github.com/vartika879/Evolutionary-Chatbot.git
 cd Evolutionary-Chatbot
-2. Create a virtual environment
+2. Set up virtual environment
+
+Bash
+# macOS/Linux
 python -m venv .venv
-3. Activate the environment
-
-Windows PowerShell
-
-.venv\Scripts\Activate.ps1
-
-macOS / Linux
-
 source .venv/bin/activate
-4. Install dependencies
+
+# Windows
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+3. Install dependencies
+
+Bash
 pip install -r requirements.txt
-5. Configure API keys
+4. Configure Environment Variables
 
-Create a .env file:
+Create a .env file in the root directory:
 
-GROQ_API_KEY=your_groq_api_key
-COHERE_API_KEY=your_cohere_api_key
-▶️ Running the Latest RAG Version
+Code snippet
+GROQ_API_KEY=your_groq_api_key_here
+COHERE_API_KEY=your_cohere_api_key_here
+5. Launch the RAG Chatbot (Stage 04)
 
-The latest major version is located in:
-
-04_Chatbot_with_rag/
-
-Navigate to the directory:
-
+Bash
 cd 04_Chatbot_with_rag
-
-Run the Streamlit application:
-
 streamlit run frontend.py
-
-Upload a PDF from the application and start asking questions about the document.
-
 💬 Example Queries
-General Conversation
-What can you help me with?
-Web Search
-What are the latest developments in Generative AI?
-Calculator
-Calculate 125 * 48
-Stock Tool
-What is the latest price of AAPL?
-RAG
+Web Search: "What are the latest updates in LangGraph?"
 
-After uploading a PDF:
+Stock Tool: "What is the current trading price of NVDA?"
 
-What is the main topic of this document?
+Calculator: "Calculate (450 * 18) / 2.5"
 
+PDF RAG (Post-upload): "Summarize the methodology section from the uploaded paper."
 
-Summarize the key findings.
+🚧 Roadmap
+[ ] Hybrid dense/sparse search (BM25 + FAISS)
 
+[ ] Cross-encoder reranking for context compression
 
-What does the document say about X?
+[ ] LangSmith observability and trace evaluation
 
+[ ] FastAPI backend decouple with Docker containerization
 
-Which section discusses Y?
-🎯 Why This Project?
-
-The goal of this project was not to build another isolated chatbot demo.
-
-Instead, it explores how a conversational AI application can evolve as new capabilities are introduced.
-
-Each stage focuses on a different engineering problem:
-
-LLM Integration
-      ↓
-Streaming
-      ↓
-Context Handling
-      ↓
-State Persistence
-      ↓
-Tool Calling
-      ↓
-Agentic Workflow
-      ↓
-RAG
-
-This makes the repository both a practical project and a progression through important LLM application engineering concepts.
-
-🧠 Learning Outcomes
-
-Through this project, I explored and implemented:
-
-LangGraph
-StateGraph
-Nodes and edges
-Conditional routing
-ToolNode
-Graph-based orchestration
-Iterative workflows
-Conversational State
-Conversation history
-Thread-based state
-Persistent state
-SQLite checkpointing
-Tool Calling
-Tool definition
-Tool selection
-Tool execution
-Tool result handling
-Multi-step tool workflows
-RAG
-PDF ingestion
-Document extraction
-Text splitting
-Embeddings
-Vector stores
-Similarity retrieval
-Retrieval-Augmented Generation
-Document-grounded responses
-Application Development
-Streamlit integration
-Modular Python structure
-Environment configuration
-LLM application workflows
-🚧 Future Improvements
-
-The project can be further evolved toward a production-grade AI system with:
-
-Hybrid search
-Retrieval reranking
-Metadata filtering
-Conversational RAG
-Citation-aware responses
-Multi-document retrieval
-Document-level access control
-Background document ingestion
-RAG evaluation
-Retrieval quality evaluation
-LangSmith tracing and evaluation
-FastAPI backend
-Docker deployment
-Production monitoring
-Improved observability
 👩‍💻 Author
 Vartika Gupta
 
-Aspiring AI Engineer focused on:
+AI Engineer focused on LangGraph, RAG Systems, and Autonomous Agents.
 
-Generative AI • LangChain • LangGraph • RAG • AI Agents • LLM Applications
+GitHub: @vartika879
 
-GitHub: github.com/vartika879
-LinkedIn: linkedin.com/in/vartika-gupta-560b3b36b
-⭐ Project Philosophy
+LinkedIn: Vartika Gupta
 
-Build one system. Keep evolving it.
-
-This repository documents that evolution — from a simple conversational workflow to a more capable tool-using, stateful, and document-aware AI system powered by LangGraph.
-
-If you find this project useful, consider giving it a ⭐ on GitHub.
